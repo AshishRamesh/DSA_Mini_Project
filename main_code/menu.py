@@ -1,30 +1,10 @@
-import pygame
-import sys
+import pygame , os , sys 
+import cmn_func as func
 from pathlib import Path 
+from pygame import mixer
 from hanoi import *
 
-pygame.init()
-
-# Constants
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-FPS = 60
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-FONT_SIZE = 40
-
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Game Launcher")
-clock = pygame.time.Clock()
-
-# Fonts
-font = pygame.font.Font(None, FONT_SIZE)
-
-def draw_text(text, color, x, y):
-    text_surface = font.render(text, True, color)
-    text_rect = text_surface.get_rect(center=(x, y))
-    screen.blit(text_surface, text_rect)
-
+pygame.display.set_caption("Data Dash")
 class Button:
     def __init__(self, x, y, width, height, text, action=None):
         self.rect = pygame.Rect(x, y, width, height)
@@ -32,9 +12,9 @@ class Button:
         self.action = action
 
     def draw(self):
-        pygame.draw.rect(screen, BLACK, self.rect)
-        draw_text(self.text, WHITE, self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2)
-
+        # pygame.draw.rect(screen, BLACK, self.rect)
+        func.custom_text(self.text, self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2)
+        
 # Splash Screen
 splash_screen = True
 while splash_screen:
@@ -43,14 +23,19 @@ while splash_screen:
             pygame.quit()
             sys.exit()
 
-    screen.fill(WHITE)
-    draw_text("DSA Minigame", BLACK, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+    func.screen.fill(func.BLACK)
+    func.draw_text("AMEEN MJ ", func.WHITE, func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 4)
+    func.draw_text("MANO ", func.WHITE, func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 3)
+    func.draw_text("KEVIN ANSLOM", func.WHITE, func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2)
     pygame.display.flip()
-
-    pygame.time.delay(2000)  # Display splash screen for 2 seconds
+    pygame.time.delay(3000)  # Display splash screen for 2 seconds
     splash_screen = False
 
 # Start Screen
+mixer.init()
+mixer.music.load(func.file_loc("bg.mp3"))
+mixer.music.set_volume(0.7)
+
 start_screen = True
 while start_screen:
     for event in pygame.event.get():
@@ -60,38 +45,54 @@ while start_screen:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 start_screen = False
-
-    screen.fill(WHITE)
-    draw_text("DSA Minigame", BLACK, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
-    draw_text("Press Enter to Start", BLACK, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
-
+    func.screen.fill(func.BLACK)
+    func.screen.blit(func.background_image, (0, 0))
+    
+    func.custom_text("Data Dash: Adventures in Data Structures", func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 3)
+    font = pygame.font.Font(func.file_loc("VerminVibes1989Regular-m77m.ttf"), func.FONT_SIZE)
+    func.custom_text("Press Enter to Start",(func.SCREEN_WIDTH // 2), (func.SCREEN_HEIGHT // 2))
+    mixer.music.play()
     pygame.display.flip()
-    clock.tick(FPS)
+    func.clock.tick(func.FPS)
 
 # Menu Screen
 menu_screen = True
 game_buttons = [
-    Button(300, 170, 250, 50, "Tower Of Hanoi", action=lambda: exec(open(Path(__file__).parent / "hanoi.py").read())),
-    Button(300, 270, 250, 50, "Game 2", action=lambda: print("Clicked Game 2")),
-    Button(300, 370, 250, 50, "Game 3", action=lambda: print("Clicked Game 3"))
+    Button(func.SCREEN_WIDTH // 3, 170, 250, 50, "Ahoy Hanoi!", action=lambda: exec(open(Path(__file__).parent / "hanoi.py").read())),
+    Button(func.SCREEN_WIDTH // 3, 270, 250, 50, "Queue Quest", action=lambda: print("Clicked Game 2")),
+    Button(func.SCREEN_WIDTH // 3, 370, 250, 50, "Tree Trek", action=lambda: print("Clicked Game 3"))
 ]
+
+selected_button_index = 0
+game_buttons[selected_button_index].hovered = True
+
 while menu_screen:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            for button in game_buttons:
-                if button.rect.collidepoint(event.pos):
-                    if button.action:
-                        button.action()
-
-    screen.fill(WHITE)
-    draw_text("Game Menu", BLACK, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 4)
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                selected_button_index = (selected_button_index - 1) % len(game_buttons)
+            elif event.key == pygame.K_DOWN:
+                selected_button_index = (selected_button_index + 1) % len(game_buttons)
+            elif event.key == pygame.K_RETURN:
+                # Execute the action of the selected button
+                button = game_buttons[selected_button_index]
+                if button.action:
+                    button.action()
+    func.screen.fill(func.BLACK)
+    func.screen.blit(func.background_image, (0, 0))
+    # draw_text("Game Menu", WHITE, SCREEN_WIDTH // 3, SCREEN_HEIGHT // 4)
+    mixer.unpause
+    pygame.draw.rect(func.screen, func.PURPLE, game_buttons[selected_button_index].rect, 2)
 
     # Display game buttons
-    for button in game_buttons:
+    for index, button in enumerate(game_buttons):
         button.draw()
+        # Draw border around the selected button
+        if index == selected_button_index:
+            pygame.draw.rect(func.screen, func.YELLOW, button.rect, 3)
 
     pygame.display.flip()
-    clock.tick(FPS)
+    func.clock.tick(func.FPS)
