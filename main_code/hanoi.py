@@ -15,6 +15,8 @@ towers_midx = [120, 320, 520]
 pointing_at = 0
 floating = False
 floater = 0
+paused = False
+WHITE = func.WHITE
 
 
 def menu_screen():  # to be called before starting actual game loop
@@ -116,6 +118,72 @@ def reset():
     menu_screen()
     make_disks()
 
+def custom_text(text, x, y, size, color=func.YELLOW):
+    global screen
+    font = func.font_custom
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect(center=(x, y))
+    func.screen.blit(text_surface, text_rect)
+
+def pause_menu():
+    global screen, paused
+
+    background_snapshot = func.screen.copy()
+
+    blurred_screen = pygame.transform.smoothscale(background_snapshot, (func.SCREEN_WIDTH // 10, func.SCREEN_HEIGHT // 10))
+    blurred_screen = pygame.transform.smoothscale(blurred_screen, (func.SCREEN_WIDTH, func.SCREEN_HEIGHT))
+
+    overlay = pygame.Surface((func.SCREEN_WIDTH, func.SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 150))
+
+    #resume_button_rect = pygame.Rect(func.SCREEN_WIDTH // 2 - 50, func.SCREEN_HEIGHT // 2 - 25, 100, 50)
+    #menu_button_rect = pygame.Rect(func.SCREEN_WIDTH // 2 - 50, func.SCREEN_HEIGHT // 2 + 25, 100, 50)
+
+    # Initialize the highlighted button
+    highlighted_button = "resume"
+
+    func.screen.blit(blurred_screen, (0, 0))
+    func.screen.blit(overlay, (0, 0))
+
+    func.custom_text('Game Paused', func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 3, func.BIG_SIZE)
+    custom_text('Resume', func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2, func.MEDIUM_SIZE, color=func.RED if highlighted_button == "resume" else func.YELLOW)
+    custom_text('Main Menu', func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2 + 50, func.MEDIUM_SIZE, color=func.RED if highlighted_button == "menu" else func.YELLOW)
+
+    pygame.display.flip()
+
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    # Resume the game
+                    paused = False
+                elif event.key == pygame.K_RETURN:
+                    if highlighted_button == "resume":
+                        # Resume the game
+                        paused = False
+                    elif highlighted_button == "menu":
+                        # Return to the main menu
+                        paused = False
+                        reset()
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_UP:
+                    # Toggle the highlighted button
+                    highlighted_button = "menu" if highlighted_button == "resume" else "resume"
+
+        func.screen.blit(blurred_screen, (0, 0))
+        func.screen.blit(overlay, (0, 0))
+
+        func.custom_text('Game Paused', func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 3, func.BIG_SIZE)
+        custom_text('Resume', func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2, func.MEDIUM_SIZE, color=func.RED if highlighted_button == "resume" else func.YELLOW)
+        custom_text('Main Menu', func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2 + 50, func.MEDIUM_SIZE, color=func.RED if highlighted_button == "menu" else func.YELLOW)
+
+        pygame.display.flip()
+
+        func.clock.tick(60)
+
+
 # main game loop:
 if __name__ == '__main__':
         menu_screen()
@@ -126,7 +194,8 @@ if __name__ == '__main__':
                     game_done = True
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        reset()
+                        paused = True
+                        pause_menu()
                     if event.key == pygame.K_q:
                         game_done = True
                     if event.key == pygame.K_RIGHT:
@@ -158,12 +227,13 @@ if __name__ == '__main__':
                             floating = False
                             disks[floater]['rect'].midtop = (towers_midx[pointing_at], 400-23)
                             steps += 1
-            func.screen.fill(func.BLACK)
-            func.screen.blit(func.background_image, (0, 0))
-            draw_towers()
-            draw_disks()
-            draw_ptr()
-            func.draw_text('Steps: '+str(steps), func.WHITE,func.SCREEN_WIDTH//2, 50,func.font_custom)
-            pygame.display.flip()
-            if not floating:check_won()
-            func.clock.tick(framerate)
+            if not paused:
+                func.screen.fill(func.BLACK)
+                func.screen.blit(func.background_image, (0, 0))
+                draw_towers()
+                draw_disks()
+                draw_ptr()
+                func.draw_text('Steps: '+str(steps), func.WHITE,func.SCREEN_WIDTH//2, 50,func.font_custom)
+                pygame.display.flip()
+                if not floating:check_won()
+                func.clock.tick(framerate)
