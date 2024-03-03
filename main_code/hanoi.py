@@ -1,9 +1,8 @@
 import pygame, sys, time
 import cmn_func as func
 
-pygame.init()
-pygame.display.set_caption("Towers of Hanoi")
 
+pygame.display.set_caption("Towers of Hanoi")
 
 game_done = False
 framerate = 60
@@ -17,22 +16,6 @@ pointing_at = 0
 floating = False
 floater = 0
 
-# colors:
-white = (255, 255, 255)
-black = (0, 0, 0)
-red = (255, 0, 0)
-gold = (239, 229, 51)
-blue = (78,162,196) 
-grey = (170, 170, 170)
-green = (77, 206, 145)
-
-def blit_text(screen, text, midtop, aa=True, font=None, font_name = None, size = None, color=(255,0,0)):
-    if font is None:                                    # font option is provided to save memory if font is
-        font = pygame.font.SysFont(font_name, size)     # already loaded and needs to be reused many times
-    font_surface = font.render(text, aa, color)
-    font_rect = font_surface.get_rect()
-    font_rect.midtop = midtop
-    screen.blit(font_surface, font_rect)
 
 def menu_screen():  # to be called before starting actual game loop
     global screen, n_disks, game_done
@@ -40,10 +23,10 @@ def menu_screen():  # to be called before starting actual game loop
     while not menu_done:  # every screen/scene/level has its own loop
         func.screen.fill(func.BLACK)
         func.screen.blit(func.background_image, (0, 0))
-        func.custom_text('Ahoy Hanoi !!', func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)-50)
-        func.custom_text('Use arrow keys to select difficulty:', func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2)
-        func.custom_text(str(n_disks), func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+50)
-        func.custom_text('Press ENTER to continue', func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+100)
+        func.custom_text('Ahoy Hanoi !!', func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)-150,func.BIG_SIZE)
+        func.custom_text('Use arrow keys to select difficulty:', func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)-50,func.MEDIUM_SIZE)
+        func.custom_text(str(n_disks), func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+50,func.BIG_SIZE)
+        func.custom_text('Press ENTER to continue', func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+150,func.MEDIUM_SIZE)
         for event in pygame.event.get():
             if event.type==pygame.KEYDOWN:
                 if event.key == pygame.K_q:
@@ -70,26 +53,22 @@ def game_over(): # game over screen
     func.screen.fill(func.BLACK)
     func.screen.blit(func.background_image, (0, 0))
     min_steps = 2**n_disks-1
-    func.custom_text('You Won!', func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)-50)
-    func.custom_text('Your Steps: '+str(steps), func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2))
-    func.custom_text('Minimum Steps: '+str(min_steps), func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+50)
+    func.custom_text('You Won!', func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)-150,func.BIG_SIZE)
+    func.custom_text('Your Steps: '+str(steps), func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2),func.MEDIUM_SIZE)
+    func.custom_text('Minimum Steps: '+str(min_steps), func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+50,func.MEDIUM_SIZE)
     if min_steps==steps:
-        func.custom_text('You finished in minumum steps!',func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+100)
+        func.custom_text('You finished in minumum steps!',func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+150,func.MEDIUM_SIZE)
     pygame.display.flip()
     time.sleep(2)   # wait for 2 secs 
     pygame.quit()   #pygame exit
     sys.exit()  #console exit
 
 def draw_towers():
-    global screen
     for xpos in range(40, 460+1, 200):
-        pygame.draw.rect(func.screen, green, pygame.Rect(xpos, 400, 160 , 20))
-        pygame.draw.rect(func.screen, grey, pygame.Rect(xpos+75, 200, 10, 200))
-    func.draw_text('Start',black,towers_midx[0], 403)
-    func.draw_text('Finish',black,towers_midx[2], 403)
-
-    
-
+        pygame.draw.rect(func.screen, func.GREEN, pygame.Rect(xpos, 400, 160 , 20))
+        pygame.draw.rect(func.screen, func.GREY, pygame.Rect(xpos+75, 200, 10, 200))
+    func.draw_text('Start',func.BLACK,towers_midx[0], 403,func.font_default)
+    func.draw_text('Finish',func.BLACK,towers_midx[2], 403,func.font_default)
 
 def make_disks():
     global n_disks, disks
@@ -107,7 +86,6 @@ def make_disks():
         ypos -= height+3
         width -= 23
 
-
 def draw_disks():
     global screen, disks
     for disk in disks:
@@ -116,7 +94,7 @@ def draw_disks():
 
 def draw_ptr():
     ptr_points = [(towers_midx[pointing_at]-7 ,440), (towers_midx[pointing_at]+7, 440), (towers_midx[pointing_at], 433)]
-    pygame.draw.polygon(func.screen, red, ptr_points)
+    pygame.draw.polygon(func.screen, func.RED, ptr_points)
     return
 
 def check_won():
@@ -137,8 +115,6 @@ def reset():
     floater = 0
     menu_screen()
     make_disks()
-
-
 
 # main game loop:
 if __name__ == '__main__':
@@ -187,7 +163,7 @@ if __name__ == '__main__':
             draw_towers()
             draw_disks()
             draw_ptr()
-            func.draw_text('Steps: '+str(steps), func.WHITE,320, 20)
+            func.draw_text('Steps: '+str(steps), func.WHITE,func.SCREEN_WIDTH//2, 50,func.font_custom)
             pygame.display.flip()
             if not floating:check_won()
             func.clock.tick(framerate)

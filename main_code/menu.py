@@ -13,7 +13,7 @@ class Button:
 
     def draw(self):
         # pygame.draw.rect(screen, BLACK, self.rect)
-        func.custom_text(self.text, self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2)
+        func.custom_text(self.text, self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2,func.SMALL_SIZE)
         
 # Splash Screen
 splash_screen = True
@@ -24,9 +24,10 @@ while splash_screen:
             sys.exit()
 
     func.screen.fill(func.BLACK)
-    func.draw_text("AMEEN MJ ", func.WHITE, func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 4)
-    func.draw_text("MANO ", func.WHITE, func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 3)
-    func.draw_text("KEVIN ANSLOM", func.WHITE, func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2)
+    func.draw_text("ASHISH RAMESH ", func.WHITE, func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)-50,func.font_default)
+    func.draw_text("AMEEN MJ ", func.WHITE, func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2),func.font_default)
+    func.draw_text("MANO ", func.WHITE, func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+50,func.font_default)
+    func.draw_text("KEVIN ANSLOM", func.WHITE, func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 2)+100,func.font_default)
     pygame.display.flip()
     pygame.time.delay(3000)  # Display splash screen for 2 seconds
     splash_screen = False
@@ -34,7 +35,7 @@ while splash_screen:
 # Start Screen
 mixer.init()
 mixer.music.load(func.file_loc("bg.mp3"))
-mixer.music.set_volume(0.7)
+mixer.music.set_volume(0.05)
 
 start_screen = True
 while start_screen:
@@ -47,10 +48,9 @@ while start_screen:
                 start_screen = False
     func.screen.fill(func.BLACK)
     func.screen.blit(func.background_image, (0, 0))
-    
-    func.custom_text("Data Dash: Adventures in Data Structures", func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 3)
-    font = pygame.font.Font(func.file_loc("VerminVibes1989Regular-m77m.ttf"), func.FONT_SIZE)
-    func.custom_text("Press Enter to Start",(func.SCREEN_WIDTH // 2), (func.SCREEN_HEIGHT // 2))
+    func.custom_text("Data Dash", func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 3)+50, func.BIG_SIZE)
+    func.custom_text("Adventures in Data Structures", func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2, func.MEDIUM_SIZE)
+    func.custom_text("Press Enter to Start",(func.SCREEN_WIDTH // 2), (func.SCREEN_HEIGHT // 2)+150,func.SMALL_SIZE)
     mixer.music.play()
     pygame.display.flip()
     func.clock.tick(func.FPS)
@@ -58,9 +58,9 @@ while start_screen:
 # Menu Screen
 menu_screen = True
 game_buttons = [
-    Button(func.SCREEN_WIDTH // 3, 170, 250, 50, "Ahoy Hanoi!", action=lambda: exec(open(Path(__file__).parent / "hanoi.py").read())),
-    Button(func.SCREEN_WIDTH // 3, 270, 250, 50, "Queue Quest", action=lambda: print("Clicked Game 2")),
-    Button(func.SCREEN_WIDTH // 3, 370, 250, 50, "Tree Trek", action=lambda: print("Clicked Game 3"))
+    Button((func.SCREEN_WIDTH // 2)-125, (func.SCREEN_HEIGHT //2)-100, 250, 50, "Ahoy Hanoi!", action=lambda: exec(open(Path(__file__).parent / "hanoi.py").read())),
+    Button((func.SCREEN_WIDTH // 2)-125, func.SCREEN_HEIGHT //2, 250, 50, "Queue Quest", action=lambda: print("Clicked Game 2")),
+    Button((func.SCREEN_WIDTH // 2)-125, (func.SCREEN_HEIGHT //2)+100, 250, 50, "Tree Trek", action=lambda: print("Clicked Game 3"))
 ]
 
 selected_button_index = 0
@@ -83,10 +83,9 @@ while menu_screen:
                     button.action()
     func.screen.fill(func.BLACK)
     func.screen.blit(func.background_image, (0, 0))
-    # draw_text("Game Menu", WHITE, SCREEN_WIDTH // 3, SCREEN_HEIGHT // 4)
+    func.custom_text("Game Menu",func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 4,func.BIG_SIZE)
     mixer.unpause
     pygame.draw.rect(func.screen, func.PURPLE, game_buttons[selected_button_index].rect, 2)
-
     # Display game buttons
     for index, button in enumerate(game_buttons):
         button.draw()

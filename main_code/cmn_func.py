@@ -19,8 +19,9 @@ GOLD = (239, 229, 51)
 GREY = (170, 170, 170)
 GREEN = (77, 206, 145)
 
-TITLE_SIZE = 100
-FONT_SIZE = 40
+BIG_SIZE = 100
+MEDIUM_SIZE = 50
+SMALL_SIZE = 40
 
 global n_disks, game_done
 
@@ -33,17 +34,17 @@ def file_loc(filename):
         if filename in files:
             return os.path.join(root, filename)
         
-
-def draw_text(text, color, x, y):
+def draw_text(text, color, x, y,font):
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect(center=(x, y))
     screen.blit(text_surface, text_rect)
 
-def custom_text(text,width,height):
-    draw_text(text, CYAN, (width)+3, (height)+2)
-    draw_text(text, PURPLE, (width)+3, (height)+1)
-    draw_text(text, YELLOW, width, height)
+def custom_text(text,width,height,size):
+    font_custom = pygame.font.Font(file_loc("VerminVibes1989Regular-m77m.ttf"), size)
+    draw_text(text, CYAN, (width)+3, (height)+2,font_custom)
+    draw_text(text, PURPLE, (width)+3, (height)+1,font_custom)
+    draw_text(text, YELLOW, width, height,font_custom)
 
-
-font = pygame.font.Font(file_loc("VerminVibes1989Regular-m77m.ttf"), FONT_SIZE)
+font_default =pygame.font.Font(None, SMALL_SIZE)
+font_custom = pygame.font.Font(file_loc("VerminVibes1989Regular-m77m.ttf"), SMALL_SIZE)
 background_image = pygame.image.load(file_loc('bg.png'))
