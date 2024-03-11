@@ -3,6 +3,7 @@ import cmn_func as func
 from pathlib import Path 
 from pygame import mixer
 from hanoi import *
+from tree import *
 
 pygame.display.set_caption("Data Dash")
 class Button:
@@ -59,7 +60,7 @@ while start_screen:
 menu_screen = True
 game_buttons = [
     Button((func.SCREEN_WIDTH // 2)-150, (func.SCREEN_HEIGHT //2)-50, 300, 50, "Ahoy Hanoi !", action=lambda: exec(open(Path(__file__).parent / "hanoi.py").read())),
-    Button((func.SCREEN_WIDTH // 2)-150, (func.SCREEN_HEIGHT //2)+50, 300, 50, "Tree Trek", action=lambda: print("Clicked Game 3"))
+    Button((func.SCREEN_WIDTH // 2)-150, (func.SCREEN_HEIGHT //2)+50, 300, 50, "Tree Trek", action=lambda: exec(open(Path(__file__).parent / "tree.py").read()))
 ]
 
 selected_button_index = 0
