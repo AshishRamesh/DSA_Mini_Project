@@ -11,7 +11,7 @@ framerate = 60
 steps = 0
 n_disks = 3
 disks = []
-towers_midx = [120, 320, 520]
+towers_midx = [func.SCREEN_WIDTH // 6, func.SCREEN_WIDTH // 2, 5 * func.SCREEN_WIDTH // 6]
 pointing_at = 0
 floating = False
 floater = 0
@@ -66,22 +66,22 @@ def game_over(): # game over screen
     sys.exit()  #console exit
 
 def draw_towers():
-    for xpos in range(40, 460+1, 200):
-        pygame.draw.rect(func.screen, func.GREEN, pygame.Rect(xpos, 400, 160 , 20))
-        pygame.draw.rect(func.screen, func.GREY, pygame.Rect(xpos+75, 200, 10, 200))
-    func.draw_text('Start',func.BLACK,towers_midx[0], 403,func.font_default)
-    func.draw_text('Finish',func.BLACK,towers_midx[2], 403,func.font_default)
+    for xpos in towers_midx:
+        pygame.draw.rect(func.screen, func.GREEN, pygame.Rect(xpos - 80, 400, 160, 20))
+        pygame.draw.rect(func.screen, func.GREY, pygame.Rect(xpos - 5, 200, 10, 200))
+    func.draw_text('Start', func.BLACK, towers_midx[0], 409, func.font_default)
+    func.draw_text('Finish', func.BLACK, towers_midx[2], 409, func.font_default)
 
 def make_disks():
     global n_disks, disks
     disks = []
     height = 20
-    ypos = 397 - height
+    ypos = func.SCREEN_HEIGHT//2 - height//2
     width = n_disks * 23
     for i in range(n_disks):
         disk = {}
         disk['rect'] = pygame.Rect(0, 0, width, height)
-        disk['rect'].midtop = (120, ypos)
+        disk['rect'].midtop = (towers_midx[0], ypos)
         disk['val'] = n_disks-i
         disk['tower'] = 0
         disks.append(disk)

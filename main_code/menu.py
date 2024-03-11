@@ -13,7 +13,7 @@ class Button:
 
     def draw(self):
         # pygame.draw.rect(screen, BLACK, self.rect)
-        func.custom_text(self.text, self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2,func.SMALL_SIZE)
+        func.custom_text(self.text, self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height // 2,func.MEDIUM_SIZE)
         
 # Splash Screen
 splash_screen = True
@@ -47,7 +47,7 @@ while start_screen:
             if event.key == pygame.K_RETURN:
                 start_screen = False
     func.screen.fill(func.BLACK)
-    func.screen.blit(func.background_image, (0, 0))
+    func.screen.blit(func.background_main, (0, 0))
     func.custom_text("Data Dash", func.SCREEN_WIDTH // 2, (func.SCREEN_HEIGHT // 3)+50, func.BIG_SIZE)
     func.custom_text("Adventures in Data Structures", func.SCREEN_WIDTH // 2, func.SCREEN_HEIGHT // 2, func.MEDIUM_SIZE)
     func.custom_text("Press Enter to Start",(func.SCREEN_WIDTH // 2), (func.SCREEN_HEIGHT // 2)+150,func.SMALL_SIZE)
@@ -58,9 +58,8 @@ while start_screen:
 # Menu Screen
 menu_screen = True
 game_buttons = [
-    Button((func.SCREEN_WIDTH // 2)-125, (func.SCREEN_HEIGHT //2)-100, 250, 50, "Ahoy Hanoi!", action=lambda: exec(open(Path(__file__).parent / "hanoi.py").read())),
-    Button((func.SCREEN_WIDTH // 2)-125, func.SCREEN_HEIGHT //2, 250, 50, "Queue Quest", action=lambda: print("Clicked Game 2")),
-    Button((func.SCREEN_WIDTH // 2)-125, (func.SCREEN_HEIGHT //2)+100, 250, 50, "Tree Trek", action=lambda: print("Clicked Game 3"))
+    Button((func.SCREEN_WIDTH // 2)-150, (func.SCREEN_HEIGHT //2)-50, 300, 50, "Ahoy Hanoi !", action=lambda: exec(open(Path(__file__).parent / "hanoi.py").read())),
+    Button((func.SCREEN_WIDTH // 2)-150, (func.SCREEN_HEIGHT //2)+50, 300, 50, "Tree Trek", action=lambda: print("Clicked Game 3"))
 ]
 
 selected_button_index = 0

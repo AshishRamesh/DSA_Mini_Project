@@ -48,3 +48,4 @@ def custom_text(text,width,height,size):
 font_default =pygame.font.Font(None, SMALL_SIZE)
 font_custom = pygame.font.Font(file_loc("VerminVibes1989Regular-m77m.ttf"), SMALL_SIZE)
 background_image = pygame.image.load(file_loc('bg.png'))
+background_main = pygame.image.load(file_loc('bg_main.png'))

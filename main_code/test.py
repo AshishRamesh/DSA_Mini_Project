@@ -1,35 +1,81 @@
 import pygame
-import numpy
-import cv2
+import sys
+import random
 
+# Initialize Pygame
 pygame.init()
-window = pygame.display.set_mode((300, 300))
-clock = pygame.time.Clock()
 
-def create_neon(surf):
-    surf_alpha = surf.convert_alpha()
-    rgb = pygame.surfarray.array3d(surf_alpha)
-    alpha = pygame.surfarray.array_alpha(surf_alpha).reshape((*rgb.shape[:2], 1))
-    image = numpy.concatenate((rgb, alpha), 2)
-    cv2.GaussianBlur(image, ksize=(9, 9), sigmaX=10, sigmaY=10, dst=image)
-    cv2.blur(image, ksize=(5, 5), dst=image)
-    bloom_surf = pygame.image.frombuffer(image.flatten(), image.shape[1::-1], 'RGBA')
-    return bloom_surf
+# Constants
+WIDTH, HEIGHT = 800, 600
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RADIUS = 20
 
-image = pygame.Surface((100, 100), pygame.SRCALPHA)
-pygame.draw.rect(image, (255, 128, 128), (10, 10, 80, 80))
-neon_image = create_neon(image)
+# Pygame setup
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Random Binary Tree Visualization")
 
-run = True
-while run:
+# Node class
+class Node:
+    def _init_(self, value, x, y):
+        self.value = value
+        self.left = None
+        self.right = None
+        self.x = x
+        self.y = y
+
+# Function to draw nodes
+def draw_node(node):
+    pygame.draw.circle(screen, WHITE, (node.x, node.y), RADIUS)
+    font = pygame.font.Font(None, 36)
+    text = font.render(str(node.value), True, BLACK)
+    screen.blit(text, (node.x - 10, node.y - 10))
+
+# Function to draw the entire tree
+def draw_tree(root):
+    if root:
+        draw_node(root)
+        if root.left:
+            draw_edge(root, root.left)
+            draw_tree(root.left)
+        if root.right:
+            draw_edge(root, root.right)
+            draw_tree(root.right)
+
+def draw_edge(start, end):
+    pygame.draw.line(screen, WHITE, (start.x, start.y + RADIUS), (end.x, end.y - RADIUS), 2)
+
+# Function to generate a random binary tree with a minimum of 3 nodes and a maximum of 20 nodes on both sides
+def generate_random_tree(height, x, y, horizontal_spacing, node_count):
+    if height == 0 or node_count >= 20:
+        return None  # Limit the depth and ensure a maximum of 20 nodes
+
+    value = random.randint(1, 100)
+    node = Node(value, x, y)
+    generate_left = random.choice([True, False])
+    generate_right = random.choice([True, False])
+
+    if generate_left:
+        node.left = generate_random_tree(height - 1, x - horizontal_spacing, y + 60, horizontal_spacing // 2, node_count + 1)
+
+    if generate_right:
+        node.right = generate_random_tree(height - 1, x + horizontal_spacing, y + 60, horizontal_spacing // 2, node_count + 1)
+
+    return node
+
+random_height_left = random.randint(2, 4)  # Random height for the left side
+random_height_right = random.randint(2, 4)  # Random height for the right side
+
+random_tree = Node(50, WIDTH // 2, 50)
+random_tree.left = generate_random_tree(random_height_left, random_tree.x - WIDTH // 8, 110, WIDTH // 16, 1)
+random_tree.right = generate_random_tree(random_height_right, random_tree.x + WIDTH // 8, 110, WIDTH // 16, 1)
+
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False          
+            pygame.quit()
+            sys.exit()
 
-    window.fill((127, 127, 127))
-    window.blit(neon_image, neon_image.get_rect(center = window.get_rect().center), special_flags = pygame.BLEND_PREMULTIPLIED)
+    screen.fill(BLACK)
+    draw_tree(random_tree)
     pygame.display.flip()
-    clock.tick(60)
-
-pygame.quit()
-exit()
